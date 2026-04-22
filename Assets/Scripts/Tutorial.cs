@@ -74,5 +74,10 @@ namespace GameTutorialSystem
         {
 
         }
+
+        public UIFocusPoint GetFocusPoint(GameObject go, FocusShape shape = FocusShape.Circle)
+        {
+            return _UI.GetFocusPoint(go, shape);
+        }
     }
 }
