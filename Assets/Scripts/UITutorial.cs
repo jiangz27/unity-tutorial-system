@@ -8,7 +8,7 @@ public class UITutorial : MonoBehaviour
     [SerializeField] UIFocusMask _mask;
     [SerializeField] GameObject _focusPointPrefab;
 
-    List<UIFocusPoint> _pointCache = new List<UIFocusPoint>();
+    List<UIFocusPoint> _points = new List<UIFocusPoint>();
 
     public UIFocusPoint GetFocusPoint(GameObject go, FocusShape shape)
     {
@@ -20,11 +20,11 @@ public class UITutorial : MonoBehaviour
 
     UIFocusPoint _GetFocusPoint()
     {
-        if (_pointCache.Count > 0)
+        if (_points.Count > 0)
         {
-            for (int i = 0; i < _pointCache.Count; i++)
+            for (int i = 0; i < _points.Count; i++)
             {
-                var p = _pointCache[i];
+                var p = _points[i];
                 if (p.gameObject.activeSelf == false)
                 {
                     p.Ready();
@@ -34,10 +34,21 @@ public class UITutorial : MonoBehaviour
         }
 
         var point = Instantiate(_focusPointPrefab, _focusPointPrefab.transform.parent).GetComponent<UIFocusPoint>();
-        _pointCache.Add(point);
+        _points.Add(point);
 
         point.Ready();
         return point;
     }
 
+    public void HidePoints()
+    {
+        foreach (var point in _points)
+        {
+            if (!point.gameObject.activeSelf) continue;
+            point.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowMask() => _mask.Show();
+    public void HideMask() => _mask.Hide();
 }

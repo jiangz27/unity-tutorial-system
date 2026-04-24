@@ -78,14 +78,10 @@ namespace GameTutorialSystem
             else
             {
                 _target = GO.transform;
-                // 1. 获取物体在世界空间中的边界盒 (兼容2D和3D)
                 Bounds worldBounds;
-                if (!GetWorldBounds(_target, out worldBounds)) return;
+                if (!_GetWorldBounds(_target, out worldBounds)) return;
+                Vector3[] screenCorners = _GetScreenCornersFromBounds(worldBounds);
 
-                // 2. 将世界坐标的角点转换为屏幕坐标
-                Vector3[] screenCorners = GetScreenCornersFromBounds(worldBounds);
-
-                // 3. 计算屏幕空间中的最小/最大X和Y值
                 float minX = float.MaxValue;
                 float maxX = float.MinValue;
                 float minY = float.MaxValue;
@@ -93,7 +89,6 @@ namespace GameTutorialSystem
 
                 foreach (Vector3 screenPoint in screenCorners)
                 {
-                    // 只处理在相机前方的点
                     if (screenPoint.z > 0)
                     {
                         minX = Mathf.Min(minX, screenPoint.x);
@@ -110,12 +105,14 @@ namespace GameTutorialSystem
                 maxY += padding;
 
                 Vector2 localMin, localMax;
+
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     _canvas.GetComponent<RectTransform>(),
                     new Vector2(minX, minY),
                     _canvas.worldCamera,
                     out localMin
                 );
+
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     _canvas.GetComponent<RectTransform>(),
                     new Vector2(maxX, maxY),
@@ -149,7 +146,6 @@ namespace GameTutorialSystem
                 case RectanglePosition.BottomRight: offset = new Vector2(1, 0); break;
             }
 
-
             _dialogueBox.pivot = Vector2.one - offset;
             Vector3[] corners = new Vector3[4];
             CurrentShape.GetWorldCorners(corners);
@@ -175,14 +171,10 @@ namespace GameTutorialSystem
             return this;
         }
 
-        /// <summary>
-        /// 兼容获取2D或3D物体的世界边界
-        /// </summary>
-        private bool GetWorldBounds(Transform target, out Bounds bounds)
+        private bool _GetWorldBounds(Transform target, out Bounds bounds)
         {
             bounds = new Bounds();
 
-            // 优先检查3D渲染器
             Renderer renderer3D = target.GetComponent<Renderer>();
             if (renderer3D != null)
             {
@@ -190,7 +182,6 @@ namespace GameTutorialSystem
                 return true;
             }
 
-            // 如果没有3D渲染器，则检查2D精灵渲染器
             SpriteRenderer renderer2D = target.GetComponent<SpriteRenderer>();
             if (renderer2D != null)
             {
@@ -202,10 +193,18 @@ namespace GameTutorialSystem
             return false;
         }
 
-        /// <summary>
-        /// 从边界盒获取8个角点的世界坐标
-        /// </summary>
-        private Vector3[] GetBoundsCorners(Bounds bounds)
+        private Vector3[] _GetScreenCornersFromBounds(Bounds worldBounds)
+        {
+            Vector3[] worldCorners = _GetBoundsCorners(worldBounds);
+            Vector3[] screenCorners = new Vector3[worldCorners.Length];
+            for (int i = 0; i < worldCorners.Length; i++)
+            {
+                screenCorners[i] = _canvas.worldCamera.WorldToScreenPoint(worldCorners[i]);
+            }
+            return screenCorners;
+        }
+
+        private Vector3[] _GetBoundsCorners(Bounds bounds)
         {
             Vector3[] corners = new Vector3[8];
             Vector3 center = bounds.center;
@@ -222,20 +221,6 @@ namespace GameTutorialSystem
             corners[7] = center + new Vector3(-extents.x, extents.y, extents.z);
 
             return corners;
-        }
-
-        /// <summary>
-        /// 将世界边界转换为屏幕坐标角点
-        /// </summary>
-        private Vector3[] GetScreenCornersFromBounds(Bounds worldBounds)
-        {
-            Vector3[] worldCorners = GetBoundsCorners(worldBounds);
-            Vector3[] screenCorners = new Vector3[worldCorners.Length];
-            for (int i = 0; i < worldCorners.Length; i++)
-            {
-                screenCorners[i] = _canvas.worldCamera.WorldToScreenPoint(worldCorners[i]);
-            }
-            return screenCorners;
         }
     }
 }

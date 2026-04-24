@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
 namespace GameTutorialSystem
 {
@@ -10,16 +8,18 @@ namespace GameTutorialSystem
         public override async UniTask Play()
         {
             var GO1 = FindGO("Cube1");
-            var point = GetFocusPoint(GO1, FocusShape.Rectangle).AddTip("You are a cube!\nNobody Knows\nGood!").AddConfirmBtn();
+            var point = UI.GetFocusPoint(GO1, FocusShape.Circle).AddTip("You are a cube!\nNobody Knows\nGood!").AddConfirmBtn();
             await WaitBtnClick(point.ConfirmBtn);
 
-            var GO2 = FindGO("Cube2");
-            GetFocusPoint(GO2, FocusShape.Circle);
+            var GO2 = FindGO("UIMain/Button");
+            UI.GetFocusPoint(GO2, FocusShape.Rectangle).MakeHole().AddTip("Click Here", RectanglePosition.BottomLeft);
+            await WaitBtnClick(GO2.GetComponent<Button>());
 
-            var GO3 = FindGO("UIMain/Button");
-            GetFocusPoint(GO3, FocusShape.Rectangle).MakeHole().AddTip("Click Here", 0).AddConfirmBtn();
+            var GO3 = FindGO("Cube2");
+            point = UI.GetFocusPoint(GO3, FocusShape.Rectangle).AddTip("This is a cube!").AddConfirmBtn();
+            await WaitBtnClick(point.ConfirmBtn);
 
-            await WaitGOActive(GO1);
+            OnFinished();
         }
     }
 }

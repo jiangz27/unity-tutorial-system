@@ -9,15 +9,24 @@ namespace GameTutorialSystem
 {
     public abstract class Tutorial
     {
-        UITutorial _UI;
+        protected UITutorial UI { get; private set; }
 
         public void Init(UITutorial UI)
         {
-            _UI = UI;
+            this.UI = UI;
+            UI.gameObject.SetActive(true);
         }
 
         public abstract UniTask Play();
-        protected virtual void OnFinishWait() { }
+        protected virtual void OnStepCompleted()
+        {
+            UI.HidePoints();
+        }
+
+        protected virtual void OnFinished()
+        {
+            UI.gameObject.SetActive(false);
+        }
 
         protected GameObject FindGO(string path)
         {
@@ -42,42 +51,37 @@ namespace GameTutorialSystem
         protected async UniTask WaitBtnClick(Button btn)
         {
             await btn.OnClickAsync();
-            OnFinishWait();
+            OnStepCompleted();
         }
 
         protected async UniTask WaitGOActive(GameObject GO)
         {
             await UniTask.WaitUntil(() => GO.activeSelf);
-            OnFinishWait();
+            OnStepCompleted();
         }
 
         protected async UniTask WaitCondition(Func<bool> condition)
         {
             await UniTask.WaitUntil(() => condition());
-            OnFinishWait();
+            OnStepCompleted();
         }
 
         protected async UniTask WaitTask(UniTask task)
         {
             await task;
-            OnFinishWait();
+            OnStepCompleted();
         }
 
         protected async UniTask<int> WaitTasksAny(List<UniTask> tasks)
         {
             var value = await UniTask.WhenAny(tasks);
-            OnFinishWait();
+            OnStepCompleted();
             return value;
         }
 
         void Interrupt()
         {
 
-        }
-
-        public UIFocusPoint GetFocusPoint(GameObject go, FocusShape shape = FocusShape.Circle)
-        {
-            return _UI.GetFocusPoint(go, shape);
         }
     }
 }
