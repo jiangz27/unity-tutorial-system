@@ -6,7 +6,7 @@ namespace GameTutorialSystem
 {
     public class TutorialSystem : MonoBehaviour
     {
-        [SerializeField] UITutorial _ui;
+        [SerializeField] GameObject _uiPrefab;
 
         void Start()
         {
@@ -15,7 +15,14 @@ namespace GameTutorialSystem
 
         public void Play(Tutorial tutorial)
         {
-            tutorial.Init(_ui);
+            var GO = Instantiate(_uiPrefab);
+            var canvas = GO.GetComponent<Canvas>();
+            canvas.worldCamera = Camera.main;
+            canvas.planeDistance = 1;
+
+            var ui = GO.GetComponent<UITutorial>();
+
+            tutorial.Init(ui);
             tutorial.Play();
         }
     }

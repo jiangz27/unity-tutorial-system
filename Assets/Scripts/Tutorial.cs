@@ -25,7 +25,7 @@ namespace GameTutorialSystem
 
         protected virtual void OnFinished()
         {
-            UI.gameObject.SetActive(false);
+            GameObject.Destroy(UI.gameObject);
         }
 
         protected GameObject FindGO(string path)
