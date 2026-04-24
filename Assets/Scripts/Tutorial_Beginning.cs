@@ -10,7 +10,7 @@ namespace GameTutorialSystem
         public override async UniTask Play()
         {
             var GO1 = FindGO("Cube1");
-            var point = GetFocusPoint(GO1, FocusShape.Rectangle).AddTip("You are a cube!", 0).AddConfirmBtn();
+            var point = GetFocusPoint(GO1, FocusShape.Rectangle).AddTip("You are a cube!\nNobody Knows\nGood!").AddConfirmBtn();
             await WaitBtnClick(point.ConfirmBtn);
 
             var GO2 = FindGO("Cube2");

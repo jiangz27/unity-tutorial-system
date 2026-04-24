@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Mathematics;
 using UnityEngine.UI;
-using Cysharp.Threading.Tasks;
+using TMPro;
 
 namespace GameTutorialSystem
 {
@@ -11,6 +11,14 @@ namespace GameTutorialSystem
         Rectangle,
     }
 
+    public enum RectanglePosition
+    {
+        BottomLeft = 0,
+        TopLeft = 1,
+        TopRight = 2,
+        BottomRight = 3,
+    }
+
     public class UIFocusPoint : MonoBehaviour
     {
         Transform _target;
@@ -18,9 +26,9 @@ namespace GameTutorialSystem
         Canvas _canvas;
 
         [SerializeField] RectTransform _shapeCircle;
-        [SerializeField] RectTransform _ShapeRectangle;
-        [SerializeField] RectTransform _bubble;
-        [SerializeField] UITextBubble _bubbleText;
+        [SerializeField] RectTransform _shapeRectangle;
+        [SerializeField] RectTransform _dialogueBox;
+        [SerializeField] TMP_Text _dialogueText;
         [SerializeField] Button _btn;
 
         public bool AcceptRaycast { get; private set; }
@@ -30,11 +38,10 @@ namespace GameTutorialSystem
         public void Ready()
         {
             _shapeCircle.gameObject.SetActive(false);
-            _ShapeRectangle.gameObject.SetActive(false);
-            _bubble.gameObject.SetActive(false);
+            _shapeRectangle.gameObject.SetActive(false);
+            _dialogueBox.gameObject.SetActive(false);
             _btn.gameObject.SetActive(false);
             _canvas = this.GetComponentInParent<Canvas>();
-            _bubbleText.Init();
             AcceptRaycast = false;
             CurrentShape = null;
             this.gameObject.SetActive(true);
@@ -43,7 +50,7 @@ namespace GameTutorialSystem
         public void Init(GameObject GO, FocusShape shape)
         {
             _targetRect = GO.GetComponent<RectTransform>();
-            CurrentShape = shape == FocusShape.Circle ? _shapeCircle : _ShapeRectangle;
+            CurrentShape = shape == FocusShape.Circle ? _shapeCircle : _shapeRectangle;
 
             if (_targetRect != null)
             {
@@ -129,32 +136,39 @@ namespace GameTutorialSystem
             return this;
         }
 
-        public UIFocusPoint AddTip(string key, int index)
+        public UIFocusPoint AddTip(string line, RectanglePosition position = RectanglePosition.BottomRight)
         {
-            var position = Vector2.zero;
-            switch (index)
+            _dialogueText.text = line;
+
+            var offset = Vector2.zero;
+            switch (position)
             {
-                case 1: position = new Vector2(0, 1); break;
-                case 2: position = new Vector2(1, 1); break;
-                case 3: position = new Vector2(1, 0); break;
+                case RectanglePosition.BottomLeft: offset = Vector2.zero; break;
+                case RectanglePosition.TopLeft: offset = new Vector2(0, 1); break;
+                case RectanglePosition.TopRight: offset = new Vector2(1, 1); break;
+                case RectanglePosition.BottomRight: offset = new Vector2(1, 0); break;
             }
 
-            _bubble.pivot = Vector2.one - position;
 
+            _dialogueBox.pivot = Vector2.one - offset;
             Vector3[] corners = new Vector3[4];
             CurrentShape.GetWorldCorners(corners);
-            _bubble.position = corners[index];
+            _dialogueBox.position = corners[(int)position];
+            _dialogueBox.gameObject.SetActive(true);
 
-            _bubbleText.Play(key).Forget();
-            _bubble.gameObject.SetActive(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogueBox);
 
             return this;
         }
 
         public UIFocusPoint AddConfirmBtn()
         {
-            if (_bubble.gameObject.activeSelf)
+            if (_dialogueBox.gameObject.activeSelf)
             {
+                var corners = new Vector3[4];
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogueBox);
+                _dialogueBox.GetWorldCorners(corners);
+                _btn.GetComponent<RectTransform>().position = corners[3];
                 _btn.gameObject.SetActive(true);
             }
 
