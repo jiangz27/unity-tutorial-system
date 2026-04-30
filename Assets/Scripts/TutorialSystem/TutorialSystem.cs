@@ -8,11 +8,6 @@ namespace GameTutorialSystem
     {
         [SerializeField] GameObject _uiPrefab;
 
-        void Start()
-        {
-            Play(new Tutorial_Beginning());
-        }
-
         public void Play(Tutorial tutorial)
         {
             var GO = Instantiate(_uiPrefab);
