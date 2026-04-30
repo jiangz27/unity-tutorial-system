@@ -7,9 +7,9 @@ public class UIMain : MonoBehaviour
     [SerializeField] TMP_Text _countTxt;
     [SerializeField] Button _addBtn;
 
-    public void RefreshCubeNum(int value)
+    public void RefreshCubeCount(int value)
     {
-        _countTxt.text = value.ToString();
+        _countTxt.text = "Cube Count: " + value.ToString();
     }
 
     public void ShowBtn()
@@ -17,7 +17,7 @@ public class UIMain : MonoBehaviour
         _addBtn.interactable = true;
     }
 
-    public void AddCubeNum()
+    public void AddCubeCount()
     {
         Main.Instance.AddCube();
     }

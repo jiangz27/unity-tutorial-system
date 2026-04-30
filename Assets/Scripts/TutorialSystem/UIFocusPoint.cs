@@ -44,6 +44,8 @@ namespace GameTutorialSystem
             _canvas = this.GetComponentInParent<Canvas>();
             AcceptRaycast = false;
             CurrentShape = null;
+            _targetRect = null;
+            _target = null;
             this.gameObject.SetActive(true);
         }
 
@@ -56,12 +58,17 @@ namespace GameTutorialSystem
             {
                 Vector3[] worldCorners = new Vector3[4];
                 _targetRect.GetWorldCorners(worldCorners);
+                Vector3 center = (worldCorners[0] + worldCorners[2]) / 2f;
 
-                Vector2 center = (worldCorners[0] + worldCorners[2]) / 2f;
-                CurrentShape.position = center;
-                var localPosition = CurrentShape.localPosition;
-                localPosition.z = 0f;
-                CurrentShape.localPosition = localPosition;
+                Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(_canvas.worldCamera, center);
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    CurrentShape.parent as RectTransform,
+                    screenPos,
+                    _canvas.worldCamera,
+                    out Vector2 localPos))
+                {
+                    CurrentShape.localPosition = localPos;
+                }
 
                 var size = _targetRect.rect.size;
                 if (shape == FocusShape.Circle)

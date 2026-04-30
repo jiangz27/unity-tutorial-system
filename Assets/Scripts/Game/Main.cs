@@ -30,13 +30,13 @@ public class Main : MonoBehaviour
         _instance = this;
 
         _tutorialSystem.Play(new Tutorial_Beginning());
-        _uiMain.RefreshCubeNum(0);
+        _uiMain.RefreshCubeCount(0);
     }
 
     public void AddCube()
     {
         cubeNum += 1;
-        _uiMain.RefreshCubeNum(cubeNum);
+        _uiMain.RefreshCubeCount(cubeNum);
         if (cubeNum == 3)
         {
             _uiMain.ShowBtn();
