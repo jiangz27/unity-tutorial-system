@@ -55,20 +55,13 @@ public class InputManager : MonoBehaviour
                 return;
             }
 
-            PerformRaycast();
-        }
-    }
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-
-    private void PerformRaycast()
-    {
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _groundMask))
-        {
-            LastClickedObject = hit.collider.gameObject;
-            LastClickWorldPosition = hit.point;
-            Debug.Log($"点击了物体: {LastClickedObject.name}, 世界坐标: {LastClickWorldPosition}");
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _groundMask))
+            {
+                LastClickedObject = hit.collider.gameObject;
+                LastClickWorldPosition = hit.point;
+            }
         }
     }
 }

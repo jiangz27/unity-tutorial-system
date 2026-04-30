@@ -9,12 +9,7 @@ public class Player : MonoBehaviour
     Vector3 _targetPoint;
     public Vector3 Velocity { get; private set; }
 
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         Velocity = Vector3.zero;
@@ -39,6 +34,7 @@ public class Player : MonoBehaviour
             else
             {
                 var dir = (_targetPoint - this.transform.position).normalized;
+                dir.y = 0f;
                 Velocity = dir * _speed * Time.deltaTime;
                 this.transform.Translate(dir * _speed * Time.deltaTime, Space.World);
             }
