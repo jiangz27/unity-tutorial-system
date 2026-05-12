@@ -17,13 +17,16 @@ namespace GameTutorialSystem
 
             UI.ShowMask();
             var cube1 = FindGO("GOs/Cube1");
-            var focusPoint = UI.GetFocusPoint(cube1, FocusShape.Rectangle).MakeHole().AddTip("Close it");
+            var focusPoint = UI.GetFocusPoint(cube1, FocusShape.Rectangle).MakeHole().AddTip("Get close to it");
             await WaitCondition(() => InputManager.Instance.LastClickedObject != null);
 
             UI.HideMask();
             await WaitCondition(() => cube1 == null);
 
             UI.ShowMask();
+            var countTxt = FindGO("UIMain/Count");
+            UI.GetFocusPoint(countTxt, FocusShape.Rectangle).AddTip("This value is changed");
+
             var cube2 = FindGO("Cube2");
             var cube3 = FindGO("Cube3");
             UI.GetFocusPoint(cube2, FocusShape.Rectangle);
