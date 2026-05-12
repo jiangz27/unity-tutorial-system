@@ -1,37 +1,15 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InputManager : MonoBehaviour
+public class InputManager : Singleton<InputManager>
 {
-    private static InputManager _instance;
-    public static InputManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                GameObject go = new GameObject("InputManager");
-                _instance = go.AddComponent<InputManager>();
-            }
-            return _instance;
-        }
-    }
-
-
     public GameObject LastClickedObject { get; private set; }
     public Vector3 LastClickWorldPosition { get; private set; }
     public bool IsPointerOverUI { get; private set; }
     private Camera _mainCamera;
     private int _groundMask;
-    private void Awake()
+    protected override void Awake()
     {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        _instance = this;
-
         _mainCamera = Camera.main;
         _groundMask = LayerMask.GetMask("Ground");
     }
