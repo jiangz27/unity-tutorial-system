@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using GameTutorialSystem;
 using UnityEngine;
@@ -9,6 +8,11 @@ public class UITutorial : MonoBehaviour
     [SerializeField] GameObject _focusPointPrefab;
 
     List<UIFocusPoint> _points = new List<UIFocusPoint>();
+
+    void Awake()
+    {
+        _focusPointPrefab.SetActive(false);
+    }
 
     public UIFocusPoint GetFocusPoint(GameObject go, FocusShape shape)
     {
