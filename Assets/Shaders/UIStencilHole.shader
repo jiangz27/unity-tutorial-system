@@ -3,9 +3,7 @@ Shader "Custom/UI/Stencil_Hole"
     Properties
     {
         _MainTex ("Sprite Texture", 2D) = "white" {}
-        _Color ("Tint", Color) = (1,1,1,1)
-        
-        // 定义 Alpha Clip，这样如果图片是透明形状，洞也是那个形状
+        _Color ("Tint", Color) = (1,1,1,1) 
         _Cutoff ("Alpha Cutoff", Range(0,1)) = 0.1
     }
 
@@ -20,16 +18,14 @@ Shader "Custom/UI/Stencil_Hole"
             "CanUseSpriteAtlas"="True"
         }
 
-        // --- 关键部分：模板测试设置 ---
         Stencil
         {
-            Ref 1           // 这里的参考值是 1
-            Comp Always     // 总是通过测试（不管本来是啥，我都要写）
-            Pass Replace    // 测试通过后，把 Buffer 里的值替换为 Ref 值 (即变成 1)
+            Ref 1       
+            Comp Always     
+            Pass Replace    
         }
 
-        // --- 关键部分：关闭颜色输出 ---
-        ColorMask 0     // 不输出任何颜色（RGB和A都不输出），它是隐形的
+        ColorMask 0
         ZWrite Off
         Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
@@ -67,7 +63,6 @@ Shader "Custom/UI/Stencil_Hole"
 
             fixed4 frag (v2f i) : SV_Target {
                 fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;
-                // 如果像素太透明，就丢弃，不要写 Stencil，这样可以支持不规则形状
                 clip(col.a - _Cutoff); 
                 return col;
             }

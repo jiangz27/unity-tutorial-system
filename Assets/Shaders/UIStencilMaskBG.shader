@@ -3,29 +3,28 @@ Shader "Custom/UI/Stencil_MaskBg"
     Properties
     {
         _MainTex ("Sprite Texture", 2D) = "white" {}
-        _Color ("Tint", Color) = (0,0,0,0.8) // 默认半透明黑
+        _Color ("Tint", Color) = (0,0,0,0.8)
     }
 
     SubShader
     {
         Tags
         {
-            "Queue"="Transparent" // 注意：渲染队列要比 Hole 晚一点点，或者依靠层级顺序
+            "Queue"="Transparent"
             "IgnoreProjector"="True"
             "RenderType"="Transparent"
             "PreviewType"="Plane"
             "CanUseSpriteAtlas"="True"
         }
 
-        // --- 关键部分：模板测试设置 ---
         Stencil
         {
-            Ref 1           // 参考值 1
-            Comp NotEqual   // 比较规则：只有当 Buffer 里的值“不等于”1 时，才渲染
-            Pass Keep       // 渲染完保持原样
+            Ref 1           
+            Comp NotEqual   
+            Pass Keep       
         }
 
-        ColorMask RGBA  // 正常输出颜色
+        ColorMask RGBA 
         ZWrite Off
         Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
